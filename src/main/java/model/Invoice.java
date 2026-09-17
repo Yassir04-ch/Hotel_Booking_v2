@@ -13,15 +13,7 @@ public class Invoice {
     private BigDecimal totalTTC;
     private LocalDateTime issuedAt;
 
-    public Invoice() {
-    }
-
-    public Invoice(UUID id,
-                   Payment payment,
-                   BigDecimal subtotalHT,
-                   BigDecimal vat,
-                   BigDecimal totalTTC,
-                   LocalDateTime issuedAt) {
+    public Invoice(UUID id, Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDateTime issuedAt) {
 
         this.id = id;
         this.payment = payment;
