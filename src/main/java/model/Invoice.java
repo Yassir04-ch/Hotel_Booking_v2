@@ -13,9 +13,9 @@ public class Invoice {
     private BigDecimal totalTTC;
     private LocalDateTime issuedAt;
 
-    public Invoice(UUID id, Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDateTime issuedAt) {
+    public Invoice(Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDateTime issuedAt) {
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.payment = payment;
         this.subtotalHT = subtotalHT;
         this.vat = vat;

@@ -13,8 +13,8 @@ public class User {
     private UserRole role;
 
 
-    public void User(UUID id , String fullName , String email , String phone , String password , UserRole role){
-        this.id = id;
+    public void User(String fullName , String email , String phone , String password , UserRole role){
+        this.id = UUID.randomUUID();
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
