@@ -11,7 +11,7 @@ public class Reservation {
     private UUID id;
     private String code;
     private UUID userId;
-    private String roomNumber;
+    private Room room;
 
     private LocalDate checkIn;
     private LocalDate checkOut;
@@ -22,11 +22,11 @@ public class Reservation {
     private ReservationStatus status;
     private LocalDate createdAt;
 
-    public Reservation(UUID id, String code, UUID userId, String roomNumber, LocalDate checkIn, LocalDate checkOut, int guests, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
+    public Reservation(UUID id, String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
         this.id = id;
         this.code = code;
         this.userId = userId;
-        this.roomNumber = roomNumber;
+        this.room = room;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.guests = guests;
@@ -47,8 +47,12 @@ public class Reservation {
         return userId;
     }
 
-    public String getRoomNumber() {
-        return roomNumber;
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room){
+        this.room = room;
     }
 
     public LocalDate getCheckIn() {

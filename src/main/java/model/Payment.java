@@ -9,14 +9,14 @@ import java.util.UUID;
 public class Payment {
 
     private UUID id;
-    private UUID reservationId;
+    private Reservation reservation;
     private BigDecimal amount;
     private PaymentStatus status;
     private LocalDate paidAt;
 
-    public Payment(UUID reservationId, BigDecimal amount ,PaymentStatus status , LocalDate paidAt) {
+    public Payment(Reservation reservation, BigDecimal amount ,PaymentStatus status , LocalDate paidAt) {
         this.id = UUID.randomUUID();
-        this.reservationId = reservationId;
+        this.reservation = reservation;
         this.amount = amount;
         this.status = status;
         this.paidAt = paidAt;
@@ -54,12 +54,12 @@ public class Payment {
         this.status = status;
     }
 
-    public UUID getReservationId() {
-        return reservationId;
+    public Reservation getReservationId() {
+        return reservation;
     }
 
-    public void setReservationId(UUID reservationId) {
-        this.reservationId = reservationId;
+    public void setReservationId(Reservation reservation) {
+        this.reservation = reservation;
     }
 
 }
