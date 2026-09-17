@@ -1,29 +1,32 @@
 package config;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 public class DatabaseConfig {
 
     private static DatabaseConfig instance;
 
-    private static String url = "jdbc:postgresql://localhost:5432/hotel_booking";
-    private static String username = "yassirch";
-    private static String password = "yassir123";
+    private static final String URL = "jdbc:postgresql://localhost:5432/hotel_booking";
+    private static final String USERNAME = "yassirch";
+    private static final String PASSWORD = "yassir123";
 
-    private DatabaseConfig(){
+    public DatabaseConfig() {
     }
 
-    public static DatabaseConfig getInstance(){
-        if(instance == null){
-             instance = new DatabaseConfig();
+    public static DatabaseConfig getInstance() {
+        if (instance == null) {
+            instance = new DatabaseConfig();
         }
         return instance;
     }
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+    public String getUrl() {
+        return URL;
     }
 
+    public String getUsername() {
+        return USERNAME;
+    }
+
+    public String getPassword() {
+        return PASSWORD;
+    }
 }
