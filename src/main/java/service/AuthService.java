@@ -5,6 +5,7 @@ import exception.InvalidCredentialsException;
 import model.User;
 import Repository.jdbc.JdbcUserRepository;
 import model.enums.UserRole;
+import utils.PasswordUtils;
 import utils.ValidationUtils;
 
 import java.util.List;
@@ -38,9 +39,9 @@ public class AuthService {
         if(userRepo.existsByEmail(email)){
             throw new EmailAlreadyExistsException("Email déja exist");
         }
-//        String passwordHash =
+            String passwordHash = PasswordUtils.hashPassword(password);
 
-            User user = new User(fullName ,email ,phone , password , UserRole.CLIENT);
+            User user = new User(fullName ,email ,phone , passwordHash , UserRole.CLIENT);
             this.userRepo.save(user);
     }
 
@@ -49,13 +50,15 @@ public class AuthService {
             throw new IllegalArgumentException("Email invalide");
         }
         if(!userRepo.existsByEmail(email)){
-            throw new InvalidCredentialsException("Email n'éxist pas");
+            throw new InvalidCredentialsException("Email n'existe pas");
         }
         User user = userRepo.getUserByEmail(email).orElseThrow(()->
                 new InvalidCredentialsException("user not found"));
-        if(!user.getPassword().equals(password)){
-            throw new InvalidCredentialsException("Password incorect");
+
+        if(!PasswordUtils.checkPassword(password,user.getPassword())){
+            throw new InvalidCredentialsException("Password incorrect");
         }
+
         userLogin = user;
     }
 
