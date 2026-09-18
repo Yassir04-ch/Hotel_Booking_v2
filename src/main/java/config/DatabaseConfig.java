@@ -1,14 +1,35 @@
 package config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class DatabaseConfig {
 
     private static DatabaseConfig instance;
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/hotel_booking";
-    private static final String USERNAME = "yassirch";
-    private static final String PASSWORD = "yassir123";
+    private static  String URL ;
+    private static  String USERNAME ;
+    private static  String PASSWORD ;
 
     private DatabaseConfig() {
+        Properties properties = new Properties();
+
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties")) {
+
+            if (input == null) {
+                throw new RuntimeException("db.properties not found");
+            }
+
+            properties.load(input);
+
+            URL = properties.getProperty("db.url");
+            USERNAME = properties.getProperty("db.username");
+            PASSWORD = properties.getProperty("db.password");
+
+        }catch (IOException e){
+            throw new RuntimeException("Error loading database configuration", e);
+        }
     }
 
     public static DatabaseConfig getInstance() {

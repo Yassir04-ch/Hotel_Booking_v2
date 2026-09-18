@@ -17,7 +17,7 @@ public class User {
 
     }
 
-    public  User(String fullName , String email , String phone , String password , UserRole role){
+    public User(String fullName, String email, String phone, String password, UserRole role) {
         this.id = UUID.randomUUID();
         this.fullName = fullName;
         this.email = email;
@@ -27,30 +27,31 @@ public class User {
     }
 
 
-    public UUID getId(){
+    public UUID getId() {
         return this.id;
     }
 
-    public void setId(UUID id){
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return this.fullName;
     }
-    public void setFullName(String fullName){
+
+    public void setFullName(String fullName) {
         this.fullName = fullName;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return this.email;
     }
 
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getPhone(){
+    public String getPhone() {
         return this.phone;
     }
 
@@ -74,7 +75,4 @@ public class User {
         this.role = role;
     }
 
-
-    public String getPho() {
-    }
 }
