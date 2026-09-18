@@ -13,7 +13,11 @@ public class User {
     private UserRole role;
 
 
-    public void User(String fullName , String email , String phone , String password , UserRole role){
+    public User() {
+
+    }
+
+    public  User(String fullName , String email , String phone , String password , UserRole role){
         this.id = UUID.randomUUID();
         this.fullName = fullName;
         this.email = email;
@@ -21,6 +25,7 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
 
     public UUID getId(){
         return this.id;
@@ -70,4 +75,6 @@ public class User {
     }
 
 
+    public String getPho() {
+    }
 }

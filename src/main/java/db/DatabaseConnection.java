@@ -18,6 +18,25 @@ public class DatabaseConnection {
         }
     }
 
+    public static DatabaseConnection getInstance() {
+
+        if (instance == null) {
+
+            synchronized (DatabaseConnection.class) {
+
+                if (instance == null) {
+                    instance = new DatabaseConnection();
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
 
 
 }

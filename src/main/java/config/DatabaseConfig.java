@@ -8,7 +8,7 @@ public class DatabaseConfig {
     private static final String USERNAME = "yassirch";
     private static final String PASSWORD = "yassir123";
 
-    public DatabaseConfig() {
+    private DatabaseConfig() {
     }
 
     public static DatabaseConfig getInstance() {
