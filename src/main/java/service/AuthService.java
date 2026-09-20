@@ -9,7 +9,6 @@ import utils.PasswordUtils;
 import utils.ValidationUtils;
 
 import java.util.List;
-import java.util.UUID;
 
 public class AuthService {
     private final JdbcUserRepository userRepo;
@@ -54,6 +53,10 @@ public class AuthService {
         }
         User user = userRepo.getUserByEmail(email).orElseThrow(()->
                 new InvalidCredentialsException("user not found"));
+
+//        System.out.println(user.getPassword());
+//        System.out.println(user.getRole());
+//        System.exit(0);
 
         if(!PasswordUtils.checkPassword(password,user.getPassword())){
             throw new InvalidCredentialsException("Password incorrect");

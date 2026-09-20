@@ -65,6 +65,7 @@ public class JdbcUserRepository implements UserRepository {
                  user.setFullName(result.getString("full_name"));
                  user.setEmail(result.getString("email"));
                  user.setPhone(result.getString("phone"));
+                 user.setPassword(result.getString("password"));
                  user.setRole(UserRole.valueOf(result.getString("role")));
                  return Optional.of(user);
              }
