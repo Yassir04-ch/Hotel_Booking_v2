@@ -32,7 +32,6 @@ public class JdbcUserRepository implements UserRepository {
             statement.setString(4,user.getPassword());
             statement.setString(5,user.getRole().name());
             statement.executeUpdate();
-
         }catch (SQLException e){
           throw new RuntimeException(e);
         }
