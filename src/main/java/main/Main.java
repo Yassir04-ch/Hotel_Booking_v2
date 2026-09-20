@@ -2,12 +2,18 @@ package main;
 
 import exception.EmailAlreadyExistsException;
 import exception.InvalidCredentialsException;
+import model.User;
+import model.enums.UserRole;
 import service.AuthService;
+import service.ReservationService;
+import service.RoomService;
 import utils.InputUtils;
 
 
 public class Main {
-    private static AuthService authService;
+    public static AuthService authService;
+    public static RoomService roomService;
+    public static ReservationService reservationService;
 
     public static int menuAuth(){
         System.out.println("1-Register");
@@ -49,23 +55,24 @@ public class Main {
             try {
                 String email = InputUtils.readString("Email : ");
                 String password = InputUtils.readString("Mode passe : ");
-                Main.authService.Login(email, password);
-                return;
-            } catch (IllegalArgumentException e) {
+                User user = Main.authService.Login(email, password);
+                System.out.println("Welcome "+user.getFullName());
+                if(user.getRole() == UserRole.ADMIN){
+                    AdminMenu.menuAdmin();
+                }else {
+                    System.out.println("Client");
+                }
+
+            } catch (IllegalArgumentException | InvalidCredentialsException e) {
                 System.out.println("Erreur : " + e.getMessage());
                 System.out.println("Veuillez réessayer");
-
-            } catch (InvalidCredentialsException e) {
-
-                System.out.println("Erreur : " + e.getMessage());
-                System.out.println("Veuillez réessayer");
-
             }
         }
     }
 
     public static void main() {
         authService = new AuthService();
+        roomService = new RoomService();
 
         while (true) {
 
@@ -81,7 +88,6 @@ public class Main {
                 case 2:
                     System.out.println("Login");
                     menuLogin();
-                    System.out.println("Welcome ");
                     break;
                 default:
                     System.out.println("Good Day");

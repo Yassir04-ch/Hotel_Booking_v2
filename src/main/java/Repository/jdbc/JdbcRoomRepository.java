@@ -26,14 +26,14 @@ public class JdbcRoomRepository  implements RoomRepository {
 
     @Override
     public void save(Room room) {
-        String sql = "INSERT INTO rooms(room_number,type,capacity,price,status) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO rooms(room_number,type,capacity,price,status) VALUES (?,?::room_type,?,?,?::room_status)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,room.getRoomNumber());
-            statement.setObject(2,room.getType());
+            statement.setString(2,room.getType().name());
             statement.setInt(3,room.getCapacity());
             statement.setBigDecimal(4,room.getPrice());
-            statement.setObject(5,room.getStatus());
+            statement.setString(5,room.getStatus().name());
             statement.executeUpdate();
         }catch (SQLException e){
          throw  new RuntimeException(e);
@@ -137,6 +137,7 @@ public class JdbcRoomRepository  implements RoomRepository {
         }
     }
 
+
     @Override
     public void delete(Room room) {
        String sql = "UPDATE rooms SET is_deleted = TRUE WHERE room_number = ?";
@@ -147,5 +148,17 @@ public class JdbcRoomRepository  implements RoomRepository {
        }catch (SQLException e){
            throw new RuntimeException(e);
        }
+    }
+
+    public void updateStatus(Room room, RoomStatus roomStatus) {
+        String sql = "UPDATE rooms SET type = ?, WHERE room_number = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setObject(1,room.getStatus());
+            statement.setString(2,room.getRoomNumber());
+            statement.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }

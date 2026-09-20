@@ -21,6 +21,8 @@ public interface RoomRepository {
 
     void update(Room room);
 
+    void updateStatus(Room room , RoomStatus status);
+
     void delete(Room room);
 
 }

@@ -44,7 +44,7 @@ public class AuthService {
             this.userRepo.save(user);
     }
 
-    public void Login(String email , String password){
+    public User Login(String email , String password){
         if(!ValidationUtils.isValidEmail(email)){
             throw new IllegalArgumentException("Email invalide");
         }
@@ -61,8 +61,8 @@ public class AuthService {
         if(!PasswordUtils.checkPassword(password,user.getPassword())){
             throw new InvalidCredentialsException("Password incorrect");
         }
-
         userLogin = user;
+        return user;
     }
 
     public static User getUserLogin(){
