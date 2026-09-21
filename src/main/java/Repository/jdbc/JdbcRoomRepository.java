@@ -151,10 +151,10 @@ public class JdbcRoomRepository  implements RoomRepository {
     }
 
     public void updateStatus(Room room, RoomStatus roomStatus) {
-        String sql = "UPDATE rooms SET type = ?, WHERE room_number = ?";
+        String sql = "UPDATE rooms SET status = ?::room_status WHERE room_number = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setObject(1,room.getStatus());
+            statement.setObject(1,roomStatus);
             statement.setString(2,room.getRoomNumber());
             statement.executeUpdate();
         }catch (SQLException e){

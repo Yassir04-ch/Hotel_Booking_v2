@@ -12,23 +12,26 @@ public class Reservation {
     private String code;
     private UUID userId;
     private Room room;
-
     private LocalDate checkIn;
     private LocalDate checkOut;
-
     private int guests;
+    private int numberOfNights;
     private BigDecimal totalPrice;
-
     private ReservationStatus status;
     private LocalDate createdAt;
 
-    public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
+    public Reservation(){
+
+    }
+
+    public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, int numberOfNights, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
         this.code = code;
         this.userId = userId;
         this.room = room;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.guests = guests;
+        this.numberOfNights = numberOfNights;
         this.totalPrice = totalPrice;
         this.status = status;
         this.createdAt = createdAt;
@@ -44,6 +47,22 @@ public class Reservation {
 
     public UUID getUserId() {
         return userId;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Room getRoom() {
@@ -64,6 +83,10 @@ public class Reservation {
 
     public int getGuests() {
         return guests;
+    }
+
+    public int getNumberOfNights() {
+        return numberOfNights;
     }
 
     public BigDecimal getTotalPrice() {
@@ -88,6 +111,10 @@ public class Reservation {
 
     public void setGuests(int guests) {
         this.guests = guests;
+    }
+
+    public void setNumberOfNights(int numberOfNights) {
+        this.numberOfNights = numberOfNights;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {

@@ -12,22 +12,7 @@ import java.util.List;
 public class RoomMenu {
 
     public static void afficherRooms(){
-        List<Room> rooms = Main.roomService.getAllRooms();
-
-        if (rooms.isEmpty()){
-            System.out.println("Aucune chambre disponible.");
-            return;
-        }
-
-        for(Room room : rooms){
-            System.out.println("=======================");
-            System.out.println("roomNumber : " + room.getRoomNumber());
-            System.out.println("capacity : " + room.getCapacity());
-            System.out.println("price : " + room.getPrice());
-            System.out.println("type : " + room.getType());
-            System.out.println("status : " + room.getStatus());
-            System.out.println("=======================");
-        }
+        Main.roomService.getAllRooms();
     }
 
     public static void afficherRoomsAvailable(){

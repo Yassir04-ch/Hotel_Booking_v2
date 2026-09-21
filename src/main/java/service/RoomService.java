@@ -49,8 +49,9 @@ public class RoomService {
     }
 
 
-    public List<Room> getAllRooms(){
-        return this.roomRepo.findAll();
+    public void getAllRooms(){
+        List<Room> rooms = this.roomRepo.findAll();
+        afficherRooms(rooms);
     }
 
     public void getAvailableRoom(){
