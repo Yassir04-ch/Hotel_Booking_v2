@@ -122,14 +122,14 @@ public class JdbcRoomRepository  implements RoomRepository {
 
     @Override
     public void update(Room room) {
-        String sql = "UPDATE users SET room_number = ?, type = ?,capacity = ?, price = ? , status = ? WHERE id = ?";
+        String sql = "UPDATE rooms SET  type = ?::room_type, capacity = ?, price = ? , status = ?::room_status WHERE room_number = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1,room.getRoomNumber());
-            statement.setObject(2,room.getType());
-            statement.setInt(3,room.getCapacity());
-            statement.setBigDecimal(4,room.getPrice());
-            statement.setObject(5,room.getStatus());
+            statement.setObject(1,room.getType().name());
+            statement.setInt(2,room.getCapacity());
+            statement.setBigDecimal(3,room.getPrice());
+            statement.setObject(4,room.getStatus().name());
+            statement.setString(5,room.getRoomNumber());
             statement.executeUpdate();
 
         }catch (SQLException e){

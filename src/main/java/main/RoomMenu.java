@@ -75,14 +75,13 @@ public class RoomMenu {
     }
 
     public static void updateRoom(){
+        afficherRooms();
         String roomNumber = InputUtils.readString("Entrer room number : ");
         int capacity = InputUtils.readInt("Entrer capacity : ");
         BigDecimal price = InputUtils.readBigDecimal("Entrer Prix : ");
         RoomType type = roomType();
         try {
             Main.roomService.updateRoom(roomNumber,capacity,price,type);
-
-            System.out.println("Room crée");
         }catch (RoomNotFoundException e){
             System.out.println("Erreur : "+e.getMessage());
         }

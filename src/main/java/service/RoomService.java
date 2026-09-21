@@ -37,6 +37,8 @@ public class RoomService {
 
     public void updateRoom( String roomNumber , int capacity , BigDecimal price,RoomType type )throws RoomNotFoundException{
         Room room = this.findRoom(roomNumber);
+//        System.out.println(room.getRoomNumber());
+//        System.exit(0);
         room.setCapacity(capacity);
         room.setPrice(price);
         room.setType(type);
