@@ -27,7 +27,7 @@ public class JdbcReservationRepository implements ReservationRepository {
     @Override
     public void save(Reservation reservation) {
         String sql= "INSERT INTO reservations (reservation_code,user_id,room_number,check_in,check_out,number_of_guests,number_of_nights,total_price,status)"
-              + "VALUES (?,?,?,?,?,?,?,?,?)";
+              + "VALUES (?,?,?,?,?,?,?,?,?::reservation_status)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,reservation.getCode());
@@ -41,7 +41,7 @@ public class JdbcReservationRepository implements ReservationRepository {
             statement.setString(9,reservation.getStatus().name());
             statement.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -49,7 +49,7 @@ public class JdbcReservationRepository implements ReservationRepository {
     public void update(Reservation reservation) {
 
     String sql= "UPDATE  reservations SET room_number = ? , check_in = ? , check_out = ? , number_of_guests = ? , number_of_nights = ? " +
-            ",total_price = ? ,status = ?  WHERE id = ?";
+            ",total_price = ? ,status = ?::reservation_status  WHERE id = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,reservation.getRoom().getRoomNumber());
@@ -168,4 +168,51 @@ public class JdbcReservationRepository implements ReservationRepository {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public void cancel(Reservation reservation){
+        String sql = "UPDATE reservations SET status = ? WHERE id =  ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1,ReservationStatus.CANCELLED.name());
+            statement.setObject(2,reservation.getId());
+            statement.executeUpdate();
+        }catch (SQLException e){
+         throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Reservation> findByRoomNumber(String roomNumber){
+        String sql = "SELECT * FROM reservations WHERE room_number = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1,roomNumber);
+            ResultSet resultSet = statement.executeQuery();
+                List<Reservation> reservationslist = new ArrayList<>();
+                while (resultSet.next()){
+                    Reservation reservation = new Reservation();
+                    reservation.setId(resultSet.getObject("id", UUID.class));
+                    reservation.setCode(resultSet.getString("reservation_code"));
+                    reservation.setUserId(resultSet.getObject("user_id", UUID.class));
+                    Room room = this.jbdcRoom.findByRoomNumber(roomNumber).orElseThrow(
+                            ()-> new RoomNotFoundException("Room not found")
+                    );
+                    reservation.setRoom(room);
+                    reservation.setCheckIn(resultSet.getDate("check_in").toLocalDate());
+                    reservation.setCheckOut(resultSet.getDate("check_out").toLocalDate());
+                    reservation.setGuests(resultSet.getInt("number_of_guests"));
+                    reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
+                    reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
+                    reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+                    reservationslist.add(reservation);
+                }
+                return reservationslist;
+        }catch (SQLException e){
+            throw  new RuntimeException(e);
+        }catch (RoomNotFoundException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

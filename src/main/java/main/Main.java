@@ -73,6 +73,7 @@ public class Main {
     public static void main() {
         authService = new AuthService();
         roomService = new RoomService();
+        reservationService = new ReservationService(roomService);
 
         while (true) {
 

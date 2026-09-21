@@ -97,7 +97,7 @@ public class JdbcRoomRepository  implements RoomRepository {
 
     @Override
     public List<Room> findAvailable() {
-        String sql = "SELECT * FROM rooms WHERE status = ? AND is_deleted = FALSE";
+        String sql = "SELECT * FROM rooms WHERE status = ?::room_status AND is_deleted = FALSE";
         List<Room> rooms = new ArrayList<>();
 
         try{

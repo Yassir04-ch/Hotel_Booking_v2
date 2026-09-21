@@ -17,5 +17,9 @@ public interface ReservationRepository {
 
     List<Reservation> findAll();
 
+    void cancel(Reservation reservation);
+
+    List<Reservation> findByRoomNumber(String roomNumber);
+
 
 }

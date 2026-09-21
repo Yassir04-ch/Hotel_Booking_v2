@@ -24,7 +24,7 @@ public class Reservation {
 
     }
 
-    public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, int numberOfNights, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
+    public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, int numberOfNights, BigDecimal totalPrice, ReservationStatus status) {
         this.code = code;
         this.userId = userId;
         this.room = room;
@@ -34,7 +34,6 @@ public class Reservation {
         this.numberOfNights = numberOfNights;
         this.totalPrice = totalPrice;
         this.status = status;
-        this.createdAt = createdAt;
     }
 
     public UUID getId() {

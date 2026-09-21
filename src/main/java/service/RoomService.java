@@ -15,25 +15,25 @@ import java.util.List;
 
 public class RoomService {
 
-    private JdbcRoomRepository roomRepo;
+    private JdbcRoomRepository jdbcRoomRepo;
 
     public RoomService(){
-        this.roomRepo = new JdbcRoomRepository();
+        this.jdbcRoomRepo = new JdbcRoomRepository();
     }
 
     public JdbcRoomRepository getRepo(){
-        return this.roomRepo;
+        return this.jdbcRoomRepo;
     }
 
     public Room findRoom(String roomNumber) throws RoomNotFoundException {
-        Room room = this.roomRepo.findByRoomNumber(roomNumber).orElseThrow(()->
+        Room room = this.jdbcRoomRepo.findByRoomNumber(roomNumber).orElseThrow(()->
                 new RoomNotFoundException("Room not found"));
         return room;
     }
 
     public void creetRoom(String roomNumber , int capacity , BigDecimal price, RoomType type ){
         Room room = new Room(roomNumber, type, capacity, price, RoomStatus.AVAILABLE);
-        this.roomRepo.save(room);
+        this.jdbcRoomRepo.save(room);
         System.out.println("Room crée");
     }
 
@@ -44,18 +44,18 @@ public class RoomService {
         room.setCapacity(capacity);
         room.setPrice(price);
         room.setType(type);
-        this.roomRepo.update(room);
+        this.jdbcRoomRepo.update(room);
         System.out.println("room update");
     }
 
 
     public void getAllRooms(){
-        List<Room> rooms = this.roomRepo.findAll();
+        List<Room> rooms = this.jdbcRoomRepo.findAll();
         afficherRooms(rooms);
     }
 
     public void getAvailableRoom(){
-       List<Room> rooms = this.roomRepo.findAvailable();
+       List<Room> rooms = this.jdbcRoomRepo.findAvailable();
         List<AvailableRoomDTO> availebRoom = rooms.stream().map(room -> new AvailableRoomDTO(room.getRoomNumber(),room.getType(),room.getCapacity(),room.getPrice()))
                .toList();
        this.afficherRoomsAvailable(availebRoom);
@@ -82,7 +82,7 @@ public class RoomService {
         if(room.getStatus() == RoomStatus.AVAILABLE){
             throw new RoomUnavailableException("Chombre déja en AVAILABLE");
         }
-        this.roomRepo.updateStatus(room , RoomStatus.AVAILABLE );
+        this.jdbcRoomRepo.updateStatus(room , RoomStatus.AVAILABLE );
     }
 
     public void updateStatusMAINTENANCE(String roomNumber) throws  RoomNotFoundException,RoomUnavailableException{
@@ -90,7 +90,7 @@ public class RoomService {
         if(room.getStatus() == RoomStatus.MAINTENANCE){
             throw new RoomUnavailableException("Chombre déja en MAINTENANCE");
         }
-        this.roomRepo.updateStatus(room , RoomStatus.MAINTENANCE );
+        this.jdbcRoomRepo.updateStatus(room , RoomStatus.MAINTENANCE );
     }
 
     public void afficherRooms(List<Room> rooms){
