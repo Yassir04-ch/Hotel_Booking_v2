@@ -14,8 +14,6 @@ public class Invoice {
     private LocalDateTime issuedAt;
 
     public Invoice(Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDateTime issuedAt) {
-
-        this.id = UUID.randomUUID();
         this.payment = payment;
         this.subtotalHT = subtotalHT;
         this.vat = vat;

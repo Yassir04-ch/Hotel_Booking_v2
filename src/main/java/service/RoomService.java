@@ -1,5 +1,6 @@
 package service;
 
+import dto.AvailableRoomDTO;
 import model.*;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
@@ -9,6 +10,7 @@ import model.enums.RoomStatus;
 import model.enums.RoomType;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoomService {
@@ -53,11 +55,25 @@ public class RoomService {
 
     public void getAvailableRoom(){
        List<Room> rooms = this.roomRepo.findAvailable();
-        if(rooms.isEmpty()){
-            System.out.println("Aucune room ");
+        List<AvailableRoomDTO> availebRoom = rooms.stream().map(room -> new AvailableRoomDTO(room.getRoomNumber(),room.getType(),room.getCapacity(),room.getPrice()))
+               .toList();
+       this.afficherRoomsAvailable(availebRoom);
+    }
+
+    public static void afficherRoomsAvailable(List<AvailableRoomDTO> rooms ){
+
+        if (rooms.isEmpty()) {
+            System.out.println("Aucune room disponible.");
             return;
         }
-        this.afficherRooms(rooms);
+        for (AvailableRoomDTO room : rooms) {
+            System.out.println("=======================");
+            System.out.println("roomNumber : " + room.getRoomNumber());
+            System.out.println("capacity : " + room.getCapacity());
+            System.out.println("price : " + room.getPrice());
+            System.out.println("type : " + room.getType());
+            System.out.println("=======================");
+        }
     }
 
     public void updateStatusAvailable(String roomNumber) throws RoomNotFoundException,RoomUnavailableException{
@@ -77,6 +93,10 @@ public class RoomService {
     }
 
     public void afficherRooms(List<Room> rooms){
+        if(rooms.isEmpty()){
+            System.out.println("Aucune room ");
+            return;
+        }
         for (Room room : rooms){
             System.out.println("=======================");
             System.out.println("roomNumber : " + room.getRoomNumber());
@@ -87,13 +107,5 @@ public class RoomService {
             System.out.println("=======================");
         }
     }
-
-
-
-
-
-
-
-
 
 }

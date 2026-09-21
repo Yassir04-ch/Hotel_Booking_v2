@@ -23,7 +23,6 @@ public class Reservation {
     private LocalDate createdAt;
 
     public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, BigDecimal totalPrice, ReservationStatus status, LocalDate createdAt) {
-        this.id = UUID.randomUUID();
         this.code = code;
         this.userId = userId;
         this.room = room;

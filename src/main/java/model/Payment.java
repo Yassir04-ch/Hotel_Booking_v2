@@ -15,7 +15,6 @@ public class Payment {
     private LocalDate paidAt;
 
     public Payment(Reservation reservation, BigDecimal amount ,PaymentStatus status , LocalDate paidAt) {
-        this.id = UUID.randomUUID();
         this.reservation = reservation;
         this.amount = amount;
         this.status = status;
