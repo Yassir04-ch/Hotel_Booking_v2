@@ -8,6 +8,7 @@ import model.Room;
 import model.enums.ReservationStatus;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +18,7 @@ public class JdbcReservationRepository implements ReservationRepository {
     private final Connection connection;
     private JdbcRoomRepository jbdcRoom;
 
-    public JdbcReservationRepository(Connection connection) {
+    public JdbcReservationRepository() {
         this.connection = DatabaseConnection.getInstance().getConnection();
         this.jbdcRoom = new JdbcRoomRepository();
     }
@@ -36,8 +37,8 @@ public class JdbcReservationRepository implements ReservationRepository {
             statement.setDate(5, Date.valueOf(reservation.getCheckOut()));
             statement.setInt(6,reservation.getGuests());
             statement.setInt(7,reservation.getNumberOfNights());
-            statement.setBigDecimal(7,reservation.getTotalPrice());
-            statement.setString(8,reservation.getStatus().name());
+            statement.setBigDecimal(8,reservation.getTotalPrice());
+            statement.setString(9,reservation.getStatus().name());
             statement.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException();
@@ -91,21 +92,80 @@ public class JdbcReservationRepository implements ReservationRepository {
 
               return Optional.of(reservation);
             }
+            return Optional.empty();
         }catch (SQLException e){
             throw new RuntimeException(e);
         } catch (RoomNotFoundException e) {
-            System.out.println("Room not found");
+            throw new RuntimeException(e);
         }
-        return Optional.empty();
     }
 
     @Override
     public List<Reservation> findByUserId(UUID userId) {
-        return List.of();
+        String sql = "SELECT * FROM reservations WHERE user_id = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setObject(1,userId);
+            ResultSet resultSet = statement.executeQuery();
+            List<Reservation> reservationslist = new ArrayList<>();
+            while (resultSet.next()){
+                Reservation reservation = new Reservation();
+                reservation.setId(resultSet.getObject("id", UUID.class));
+                reservation.setCode(resultSet.getString("reservation_code"));
+                reservation.setUserId(resultSet.getObject("user_id", UUID.class));
+                Room room = this.jbdcRoom.findByRoomNumber(resultSet.getString("room_number")).orElseThrow(
+                        ()-> new RoomNotFoundException("Room not found")
+                );
+                reservation.setRoom(room);
+                reservation.setCheckIn(resultSet.getDate("check_in").toLocalDate());
+                reservation.setCheckOut(resultSet.getDate("check_out").toLocalDate());
+                reservation.setGuests(resultSet.getInt("number_of_guests"));
+                reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
+                reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
+                reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+
+                reservationslist.add(reservation);
+            }
+            return reservationslist;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }catch (RoomNotFoundException e){
+         throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Reservation> findAll() {
-        return List.of();
+        String sql = "SELECT * FROM reservations";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            List<Reservation> reservationslist = new ArrayList<>();
+            while (resultSet.next()){
+                Reservation reservation = new Reservation();
+                reservation.setId(resultSet.getObject("id", UUID.class));
+                reservation.setCode(resultSet.getString("reservation_code"));
+                reservation.setUserId(resultSet.getObject("user_id", UUID.class));
+                Room room = this.jbdcRoom.findByRoomNumber(resultSet.getString("room_number")).orElseThrow(
+                        ()-> new RoomNotFoundException("Room not found")
+                );
+                reservation.setRoom(room);
+                reservation.setCheckIn(resultSet.getDate("check_in").toLocalDate());
+                reservation.setCheckOut(resultSet.getDate("check_out").toLocalDate());
+                reservation.setGuests(resultSet.getInt("number_of_guests"));
+                reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
+                reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
+                reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+
+                reservationslist.add(reservation);
+            }
+            return reservationslist;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }catch (RoomNotFoundException e){
+            throw new RuntimeException(e);
+        }
     }
 }
