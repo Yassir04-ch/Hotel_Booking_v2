@@ -1,5 +1,6 @@
 package service;
 
+import Repository.jdbc.JdbcReservationRepository;
 import dto.AvailableRoomDTO;
 import model.*;
 import exception.RoomNotFoundException;
@@ -16,9 +17,12 @@ import java.util.List;
 public class RoomService {
 
     private JdbcRoomRepository jdbcRoomRepo;
+    private JdbcReservationRepository jdbcReservationRepo;
 
     public RoomService(){
         this.jdbcRoomRepo = new JdbcRoomRepository();
+        this.jdbcReservationRepo = new JdbcReservationRepository();
+
     }
 
     public JdbcRoomRepository getRepo(){
@@ -107,6 +111,13 @@ public class RoomService {
             System.out.println("status : " + room.getStatus());
             System.out.println("=======================");
         }
+    }
+
+    public void deleteRoom(String roomNumber) throws RoomNotFoundException{
+        Room room = this.findRoom(roomNumber);
+        this.jdbcRoomRepo.delete(room);
+        this.jdbcReservationRepo.cancelByRoomNumber(roomNumber);
+        System.out.println("Room deleted");
     }
 
 }

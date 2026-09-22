@@ -214,5 +214,16 @@ public class JdbcReservationRepository implements ReservationRepository {
         }
     }
 
+    public void cancelByRoomNumber(String roomNumber) {
+        String sql = "UPDATE reservations SET status = ?::reservation_status WHERE room_number = ? AND status = 'CONFIRMED'::reservation_status";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, ReservationStatus.CANCELLED.name());
+            statement.setString(2, roomNumber);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

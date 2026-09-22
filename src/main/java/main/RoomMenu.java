@@ -92,4 +92,13 @@ public class RoomMenu {
         }
     }
 
+    public static void deleteRoom(){
+        String roomNumber = InputUtils.readString("Entrer room number");
+        try{
+            Main.roomService.deleteRoom(roomNumber);
+        }catch (RoomNotFoundException e){
+            System.out.println("Room Not found");
+        }
+    }
+
 }
