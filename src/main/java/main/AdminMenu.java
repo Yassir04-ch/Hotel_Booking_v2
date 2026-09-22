@@ -46,6 +46,7 @@ public class AdminMenu {
                     return;
                 case 7 :
                    ReservationMenu.createReservation();
+                   break;
                 case 0:
                     System.out.println("Good Day");
                     System.exit(0);
