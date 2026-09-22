@@ -1,6 +1,8 @@
 package service;
 
 import Repository.jdbc.JdbcReservationRepository;
+import dto.AvailableRoomDTO;
+import dto.ReservationDTO;
 import exception.InvalidReservationDateException;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
@@ -90,6 +92,17 @@ public class ReservationService {
 
         System.out.println("Reservation crée.");
 
+    }
+
+    public List<ReservationDTO> userReservation(){
+        UUID userId = AuthService.getUserLogin().getId();
+        List<Reservation>  reservations =  this.jdbcReservation.findByUserId(userId);
+        List<ReservationDTO> Reservationdto = reservations.stream().map(reservation ->
+                        new ReservationDTO(reservation.getCode(),
+                        reservation.getRoom().getRoomNumber(),reservation.getCheckIn(),reservation.getCheckOut(),
+                        reservation.getGuests() ,reservation.getTotalPrice(),reservation.getStatus()))
+                        .toList();
+        return Reservationdto;
     }
 
 

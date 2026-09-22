@@ -56,7 +56,7 @@ public class RoomService {
 
     public void getAvailableRoom(){
        List<Room> rooms = this.jdbcRoomRepo.findAvailable();
-        List<AvailableRoomDTO> availebRoom = rooms.stream().map(room -> new AvailableRoomDTO(room.getRoomNumber(),room.getType(),room.getCapacity(),room.getPrice()))
+       List<AvailableRoomDTO> availebRoom = rooms.stream().map(room -> new AvailableRoomDTO(room.getRoomNumber(),room.getType(),room.getCapacity(),room.getPrice()))
                .toList();
        this.afficherRoomsAvailable(availebRoom);
     }
