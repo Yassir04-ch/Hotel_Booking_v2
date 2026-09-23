@@ -22,7 +22,7 @@ public class AuthService {
         return userRepo;
     }
 
-    public void Register(String fullName , String email, String phone , String password , String role)  {
+    public void Register(String fullName , String email, String phone , String password)  {
         if(!ValidationUtils.isValidName(fullName)){
             throw new IllegalArgumentException("Name invalide");
         }
@@ -68,6 +68,7 @@ public class AuthService {
     public static User getUserLogin(){
         return userLogin;
     }
+
     public void setUserLogin(User user){
         userLogin = user;
     }

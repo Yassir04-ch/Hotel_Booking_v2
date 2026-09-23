@@ -4,6 +4,7 @@ import Repository.jdbc.JdbcReservationRepository;
 import dto.AvailableRoomDTO;
 import dto.ReservationDTO;
 import exception.InvalidReservationDateException;
+import exception.ReservationNotFoundException;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
 import model.Reservation;
@@ -168,6 +169,43 @@ public class ReservationService {
         return this.mapReservations(reservations);
     }
 
+    public void updateReservation(String code, String roomNumber, LocalDate checkIn, LocalDate checkout, int numberGuest) throws ReservationNotFoundException,
+            InvalidReservationDateException , RoomNotFoundException {
+        Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(() ->
+                new ReservationNotFoundException("Reservation not found"));
 
+        if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+            throw new IllegalArgumentException("Cette réservation n'est pas confirmée.");
+        }
 
-}
+        if (reservation.getCheckIn().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("impossible de modifier une réservation déja commencée.");
+        }
+
+        Room room = this.roomService.findRoom(roomNumber);
+
+        if (numberGuest > room.getCapacity()) {
+            throw new InvalidReservationDateException("Le nombre de personnes dépasse la capacité de la chambre");
+        }
+
+        this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
+        boolean valid = this.checkDate(room, checkIn, checkout);
+        if (!valid) {
+            this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
+            throw new InvalidReservationDateException("La chambre est déjà réservée dans cette période.");
+        }
+
+        BigDecimal totalPrix = this.calculerTotalPrice(room.getPrice() , checkIn ,checkout);
+        int numberOfNights =(int) ChronoUnit.DAYS.between(checkIn,checkout);
+        reservation.setRoom(room);
+        reservation.setCheckIn(checkIn);
+        reservation.setCheckOut(checkout);
+        reservation.setGuests(numberGuest);
+        reservation.setTotalPrice(totalPrix);
+        reservation.setNumberOfNights(numberOfNights);
+        reservation.setCreatedAt(LocalDate.now());
+        this.jdbcReservation.update(reservation);
+        System.out.println("Reservation updated");
+      }
+
+    }

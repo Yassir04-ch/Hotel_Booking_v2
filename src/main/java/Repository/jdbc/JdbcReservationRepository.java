@@ -171,11 +171,11 @@ public class JdbcReservationRepository implements ReservationRepository {
         }
     }
     @Override
-    public void cancel(Reservation reservation){
-        String sql = "UPDATE reservations SET status = ? WHERE id =  ?";
+    public void updateStatus(Reservation reservation,ReservationStatus status){
+        String sql = "UPDATE reservations SET status = ?::reservation_status WHERE id =  ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1,ReservationStatus.CANCELLED.name());
+            statement.setString(1,status.name());
             statement.setObject(2,reservation.getId());
             statement.executeUpdate();
         }catch (SQLException e){

@@ -41,7 +41,7 @@ public class ClientMenu {
                     break;
 
                 case 6:
-//                    ReservationMenu.updateReservation();
+                    ReservationMenu.updateReservation();
                     break;
 
                 case 7:

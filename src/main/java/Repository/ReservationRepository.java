@@ -1,6 +1,7 @@
 package Repository;
 
 import model.Reservation;
+import model.enums.ReservationStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public interface ReservationRepository {
 
     List<Reservation> findAll();
 
-    void cancel(Reservation reservation);
+    void updateStatus(Reservation reservation, ReservationStatus status);
 
     List<Reservation> findByRoomNumber(String roomNumber);
 

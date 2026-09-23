@@ -20,7 +20,7 @@ public class Main {
         System.out.println("2-Login");
         System.out.println("3-Exite");
 
-        int choix = InputUtils.readInt("Entrer Votre choix");
+        int choix = InputUtils.readInt("Entrer Votre choix : ");
        return choix;
     }
 
@@ -35,7 +35,7 @@ public class Main {
                 String email = InputUtils.readString("Email : ");
                 String password = InputUtils.readString("Mode passe : ");
 
-                Main.authService.Register(fullName, email, phone, password , "user");
+                Main.authService.Register(fullName, email, phone, password);
 
                 System.out.println("Register réussi ");
                 return;

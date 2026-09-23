@@ -2,6 +2,7 @@ package main;
 
 import dto.ReservationDTO;
 import exception.InvalidReservationDateException;
+import exception.ReservationNotFoundException;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
 import model.Reservation;
@@ -53,6 +54,31 @@ public class ReservationMenu {
         }catch (InvalidReservationDateException | RoomNotFoundException | RoomUnavailableException e){
             System.out.println("Erreur :" + e.getMessage());
 
+        }
+    }
+
+    public static void updateReservation(){
+        try{
+            String reservationCode = InputUtils.readString("Entrer code de reservation");
+
+            LocalDate checkIn = DateUtils.readDate("Entrer Date de départ ");
+
+            LocalDate checkout = DateUtils.readDate("Entrer Date d'arrivée ");
+
+            String roomNumber = InputUtils.readString("Entrer nombre de room");
+
+            int numberGuest = InputUtils.readInt("Entrer nombre des persones");
+
+            Main.reservationService.updateReservation(reservationCode, roomNumber, checkIn, checkout, numberGuest);
+
+        }catch (ReservationNotFoundException e){
+            System.out.println("Erreur : "+e.getMessage());
+
+        }catch (InvalidReservationDateException e){
+            System.out.println("Erreur : "+e.getMessage());
+
+        }catch (RoomNotFoundException e){
+            System.out.println("Erreur : "+e.getMessage());
         }
     }
 }
