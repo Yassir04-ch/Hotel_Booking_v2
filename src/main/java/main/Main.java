@@ -60,7 +60,7 @@ public class Main {
                 if(user.getRole() == UserRole.ADMIN){
                     AdminMenu.menuAdmin();
                 }else {
-                    System.out.println("Client");
+                    ClientMenu.menuCleint();
                 }
 
             } catch (IllegalArgumentException | InvalidCredentialsException e) {

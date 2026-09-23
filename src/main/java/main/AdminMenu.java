@@ -42,7 +42,7 @@ public class AdminMenu {
                     break;
 
                 case 6 :
-                    Main.authService.logOut();
+                    ReservationMenu.afficherReservation(Main.reservationService.allReservation());
                     return;
                 case 7 :
                     RoomMenu.deleteRoom();

@@ -121,6 +121,7 @@ public class JdbcReservationRepository implements ReservationRepository {
                 reservation.setCheckOut(resultSet.getDate("check_out").toLocalDate());
                 reservation.setGuests(resultSet.getInt("number_of_guests"));
                 reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
+                reservation.setTotalPrice(resultSet.getBigDecimal("total_price"));
                 reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
                 reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
 
@@ -155,6 +156,7 @@ public class JdbcReservationRepository implements ReservationRepository {
                 reservation.setCheckOut(resultSet.getDate("check_out").toLocalDate());
                 reservation.setGuests(resultSet.getInt("number_of_guests"));
                 reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
+                reservation.setTotalPrice(resultSet.getBigDecimal("total_price"));
                 reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
                 reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
 

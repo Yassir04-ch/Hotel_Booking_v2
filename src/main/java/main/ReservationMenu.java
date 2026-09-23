@@ -1,14 +1,41 @@
 package main;
 
+import dto.ReservationDTO;
 import exception.InvalidReservationDateException;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
+import model.Reservation;
 import utils.DateUtils;
 import utils.InputUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ReservationMenu {
+
+    public  static void afficherReservation(List<ReservationDTO> reservations){
+        if(reservations.isEmpty()){
+            System.out.println("Auccune reservation");
+            return;
+        }
+
+        System.out.println("===== Réservation =====");
+
+        for (ReservationDTO reservation : reservations){
+            System.out.println("Code de réservation : " + reservation.getCode());
+            System.out.println("Numéro de chambre : " + reservation.getRoomNumber());
+            System.out.println("Date de départ : " + reservation.getCheckIn());
+            System.out.println("Date d'arrivée : " + reservation.getCheckOut());
+            System.out.println("Nombre de personnes : " + reservation.getGuests());
+            System.out.println("Nombre de nuits : " + reservation.getNumberNight());
+            System.out.println("Prix total : " + reservation.getTotalPrice() + " DH");
+            System.out.println("Statut : " + reservation.getStatus());
+            System.out.println("Date de création : " + reservation.getCreatedAt());
+            System.out.println("======================");
+
+        }
+    }
+
     public static void createReservation() {
         try{
             RoomMenu.afficherRoomsAvailable();

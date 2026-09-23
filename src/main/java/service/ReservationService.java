@@ -23,6 +23,7 @@ public class ReservationService {
     private JdbcReservationRepository jdbcReservation;
     private RoomService roomService ;
 
+
     public ReservationService(RoomService roomService){
         this.jdbcReservation = new JdbcReservationRepository();
         this.roomService = roomService;
@@ -145,15 +146,26 @@ public class ReservationService {
 
     }
 
+    public List<ReservationDTO> mapReservations(List<Reservation>  reservations){
+        List<ReservationDTO> Reservationdto = reservations.stream().map(reservation ->
+                             new ReservationDTO(reservation.getCode(),
+                                reservation.getRoom().getRoomNumber(),reservation.getCheckIn(),reservation.getCheckOut(),
+                                reservation.getGuests() ,reservation.getNumberOfNights(),reservation.getTotalPrice()
+                                ,reservation.getStatus(),reservation.getCreatedAt()))
+                                .toList();
+        return Reservationdto;
+
+    }
+
+    public  List<ReservationDTO> allReservation(){
+        List<Reservation>  reservations =  this.jdbcReservation.findAll();
+        return this.mapReservations(reservations);
+    }
+
     public List<ReservationDTO> userReservation(){
         UUID userId = AuthService.getUserLogin().getId();
         List<Reservation>  reservations =  this.jdbcReservation.findByUserId(userId);
-        List<ReservationDTO> Reservationdto = reservations.stream().map(reservation ->
-                        new ReservationDTO(reservation.getCode(),
-                        reservation.getRoom().getRoomNumber(),reservation.getCheckIn(),reservation.getCheckOut(),
-                        reservation.getGuests() ,reservation.getTotalPrice(),reservation.getStatus()))
-                        .toList();
-        return Reservationdto;
+        return this.mapReservations(reservations);
     }
 
 
