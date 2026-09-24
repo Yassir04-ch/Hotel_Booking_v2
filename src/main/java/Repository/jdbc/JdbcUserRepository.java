@@ -91,6 +91,7 @@ public class JdbcUserRepository implements UserRepository {
                 user.setEmail(result.getString("email"));
                 user.setPhone(result.getString("phone"));
                 user.setRole(UserRole.valueOf(result.getString("role")));
+                user.setBalance(result.getBigDecimal("balance"));
                 return Optional.of(user);
             }
             return Optional.empty();
@@ -142,11 +143,11 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public void updateBalance(User user, BigDecimal balance) {
+    public void updateBalance(User user) {
         String sql = "UPDATE users SET balance = ? WHERE id = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setBigDecimal(1,balance);
+            statement.setBigDecimal(1,user.getBalance());
             statement.setObject(2,user.getId());
             statement.executeUpdate();
         }catch (SQLException e){

@@ -98,4 +98,15 @@ public class ReservationMenu {
         System.out.println("Total TTC : " + invoice.getTotalTTC() + " DH");
         System.out.println("=====================================");
     }
+
+    public static void cancelReservation() {
+        afficherReservation(Main.reservationService.userReservation());
+        String code = InputUtils.readString("Entrer Reservation Code : ");
+        try{
+        Main.reservationService.cancelReservation(code);
+        System.out.println("Reservation Cancel");
+        }catch (ReservationNotFoundException e){
+            System.out.println("Erreur : "+e.getMessage());
+        }
+    }
 }

@@ -21,6 +21,6 @@ public interface UserRepository {
 
     List<User> findAll();
 
-    void updateBalance(User user , BigDecimal balance);
+    void updateBalance(User user);
 
 }

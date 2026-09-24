@@ -1,5 +1,7 @@
 package service;
 
+import Policy.Refund.RemboursementPolicy;
+import Policy.RefundPolicy;
 import Repository.jdbc.JdbcReservationRepository;
 import db.DatabaseConnection;
 import dto.InvoiceDTO;
@@ -27,15 +29,18 @@ public class ReservationService {
 
     private JdbcReservationRepository jdbcReservation;
     private RoomService roomService ;
+    private  AuthService authService;
     private PaymentService paymentService;
     private InvoiceService invoiceService;
-
-
+    private RemboursementPolicy remboursementPolicy;
     public ReservationService(RoomService roomService){
         this.jdbcReservation = new JdbcReservationRepository();
         this.roomService = roomService;
         this.paymentService = new PaymentService();
         this.invoiceService = new InvoiceService();
+        this.remboursementPolicy = new RemboursementPolicy();
+        this.authService = new AuthService();
+
     }
 
     public void validateDates(LocalDate checkIn, LocalDate checkOut
@@ -116,8 +121,6 @@ public class ReservationService {
 
 
     private PaymentStrategy getPaymentStrategy(int choix) {
-
-
         switch (choix) {
 
             case 1:
@@ -178,7 +181,7 @@ public class ReservationService {
             connection.setAutoCommit(false);
             this.jdbcReservation.save(reservation);
             paymentContext.pay(user, totalTTC);
-            Payment payment = this.paymentService.createPaiment( reservation, totalPrice );
+            Payment payment = this.paymentService.createPaiment(reservation, totalPrice );
             Invoice invoice = this.invoiceService.createInvoice(payment);
             connection.commit();
             System.out.println("Reservation succes");
@@ -276,14 +279,17 @@ public class ReservationService {
               throw new IllegalArgumentException("Cette réservation est déja annulée ou Terminée");
           }
 
-          if (reservation.getCheckIn().isBefore(LocalDate.now())) {
+          User user = AuthService.getUserLogin();
 
-//              BigDecimal remboursement = this.calculerTotalPrice(reservation.getRoom().getPrice() ,LocalDate.now(),reservation.getCheckOut());
-//              User user =  AuthService.getUserLogin();
-          }
+          BigDecimal totalRembour = this.remboursementPolicy.calculateRefund(reservation);
+
+          System.out.println(totalRembour);
+          System.exit(0);
+          BigDecimal newBalance = MoneyUtils.add(user.getBalance(), totalRembour);
 
           this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
-
+          user.setBalance(newBalance);
+          authService.updateBalance(user);
       }
 
     }

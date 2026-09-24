@@ -129,8 +129,8 @@ public class AuthService {
         return users;
     }
 
-    public void updateBalance(User user , BigDecimal balance){
-        this.userRepo.updateBalance(user , balance);
+    public void updateBalance(User user ){
+        this.userRepo.updateBalance(user );
     }
 
 }

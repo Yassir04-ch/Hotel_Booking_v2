@@ -45,7 +45,7 @@ public class ClientMenu {
                     break;
 
                 case 7:
-//                    ReservationMenu.cancelReservation();
+                    ReservationMenu.cancelReservation();
                     break;
 
                 case 8:

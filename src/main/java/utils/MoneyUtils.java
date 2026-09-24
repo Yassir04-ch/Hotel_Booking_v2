@@ -13,10 +13,6 @@ public class MoneyUtils {
         return balance.subtract(amount).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static BigDecimal multiply(BigDecimal amount, BigDecimal factor) {
-        return amount.multiply(factor).setScale(2, RoundingMode.HALF_UP);
-    }
-
     public static boolean chekckAmount(BigDecimal balance, BigDecimal amount) {
         return balance.compareTo(amount) >= 0;
     }
