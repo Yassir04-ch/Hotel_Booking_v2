@@ -1,7 +1,7 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class Invoice {
@@ -11,9 +11,9 @@ public class Invoice {
     private BigDecimal subtotalHT;
     private BigDecimal vat;
     private BigDecimal totalTTC;
-    private LocalDateTime issuedAt;
+    private LocalDate issuedAt;
 
-    public Invoice(Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDateTime issuedAt) {
+    public Invoice(Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDate issuedAt) {
         this.payment = payment;
         this.subtotalHT = subtotalHT;
         this.vat = vat;
@@ -29,11 +29,11 @@ public class Invoice {
         this.id = id;
     }
 
-    public Payment getReservationId() {
+    public Payment getReservation() {
         return payment;
     }
 
-    public void setReservationId(Payment payment) {
+    public void setReservation(Payment payment) {
         this.payment = payment;
     }
 
@@ -61,11 +61,11 @@ public class Invoice {
         this.totalTTC = totalTTC;
     }
 
-    public LocalDateTime getIssuedAt() {
+    public LocalDate getIssuedAt() {
         return issuedAt;
     }
 
-    public void setIssuedAt(LocalDateTime issuedAt) {
+    public void setIssuedAt(LocalDate issuedAt) {
         this.issuedAt = issuedAt;
     }
 }

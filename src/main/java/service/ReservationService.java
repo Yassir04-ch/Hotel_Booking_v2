@@ -7,8 +7,10 @@ import exception.InvalidReservationDateException;
 import exception.ReservationNotFoundException;
 import exception.RoomNotFoundException;
 import exception.RoomUnavailableException;
+import main.ReservationMenu;
 import model.Reservation;
 import model.Room;
+import model.User;
 import model.enums.ReservationStatus;
 import model.enums.RoomStatus;
 
@@ -191,7 +193,7 @@ public class ReservationService {
         this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
         boolean valid = this.checkDate(room, checkIn, checkout);
         if (!valid) {
-            this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
+            this.jdbcReservation.updateStatus(reservation, ReservationStatus.CONFIRMED);
             throw new InvalidReservationDateException("La chambre est déjà réservée dans cette période.");
         }
 
@@ -206,6 +208,24 @@ public class ReservationService {
         reservation.setCreatedAt(LocalDate.now());
         this.jdbcReservation.update(reservation);
         System.out.println("Reservation updated");
+      }
+
+      public void cancelReservation(String code) throws ReservationNotFoundException {
+          Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(()->
+                  new ReservationNotFoundException("Reservation not found"));
+
+          if(reservation.getStatus() != ReservationStatus.CONFIRMED){
+              throw new IllegalArgumentException("Cette réservation est déja annulée ou Terminée");
+          }
+
+          if (reservation.getCheckIn().isBefore(LocalDate.now())) {
+
+//              BigDecimal remboursement = this.calculerTotalPrice(reservation.getRoom().getPrice() ,LocalDate.now(),reservation.getCheckOut());
+//              User user =  AuthService.getUserLogin();
+          }
+
+          this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
+
       }
 
     }

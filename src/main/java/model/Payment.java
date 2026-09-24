@@ -53,11 +53,11 @@ public class Payment {
         this.status = status;
     }
 
-    public Reservation getReservationId() {
+    public Reservation getReservation() {
         return reservation;
     }
 
-    public void setReservationId(Reservation reservation) {
+    public void setReservation(Reservation reservation) {
         this.reservation = reservation;
     }
 
