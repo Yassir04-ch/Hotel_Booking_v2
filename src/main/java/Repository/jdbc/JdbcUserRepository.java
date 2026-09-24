@@ -5,6 +5,7 @@ import db.DatabaseConnection;
 import model.User;
 import model.enums.UserRole;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class JdbcUserRepository implements UserRepository {
     }
     @Override
     public void save(User user) {
-        String sql = "INSERT INTO users(full_name,email,phone,password,role) VALUES (?,?,?,?,?::user_role)";
+        String sql = "INSERT INTO users(full_name,email,phone,password,role,balance) VALUES (?,?,?,?,?::user_role,?)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1,user.getFullName());
@@ -31,6 +32,7 @@ public class JdbcUserRepository implements UserRepository {
             statement.setString(3,user.getPhone());
             statement.setString(4,user.getPassword());
             statement.setString(5,user.getRole().name());
+            statement.setBigDecimal(6,user.getBalance());
             statement.executeUpdate();
         }catch (SQLException e){
           throw new RuntimeException(e);
@@ -66,6 +68,7 @@ public class JdbcUserRepository implements UserRepository {
                  user.setPhone(result.getString("phone"));
                  user.setPassword(result.getString("password"));
                  user.setRole(UserRole.valueOf(result.getString("role")));
+                 user.setBalance(result.getBigDecimal("balance"));
                  return Optional.of(user);
              }
             return Optional.empty();
@@ -136,5 +139,18 @@ public class JdbcUserRepository implements UserRepository {
           throw new RuntimeException(e);
         }
         return users;
+    }
+
+    @Override
+    public void updateBalance(User user, BigDecimal balance) {
+        String sql = "UPDATE users SET balance = ? WHERE id = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setBigDecimal(1,balance);
+            statement.setObject(2,user.getId());
+            statement.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }

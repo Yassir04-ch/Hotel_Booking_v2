@@ -20,13 +20,14 @@ public class JdbcPaymentRepository implements PaymentRespository {
 
     @Override
     public void save(Payment payment){
-        String sql = "INSERT INTO payments(reservation_id,amount,status,paid_at) VALUES(?,?,?::payment_status,?)";
+        String sql = "INSERT INTO payments(id,reservation_id,amount,status,paid_at) VALUES(?,?,?,?::payment_status,?)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setObject(1,payment.getReservation().getId());
-            statement.setBigDecimal(2,payment.getAmount());
-            statement.setString(3,payment.getStatus().name());
-            statement.setDate(4, Date.valueOf(payment.getPaidAt()));
+            statement.setObject(1,payment.getId());
+            statement.setObject(2,payment.getReservation().getId());
+            statement.setBigDecimal(3,payment.getAmount());
+            statement.setString(4,payment.getStatus().name());
+            statement.setDate(5, Date.valueOf(payment.getPaidAt()));
             statement.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException(e);

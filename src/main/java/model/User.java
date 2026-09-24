@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import model.enums.UserRole;
 
@@ -11,18 +12,20 @@ public class User {
     private String phone;
     private String password;
     private UserRole role;
+    private BigDecimal balance;
 
 
     public User() {
 
     }
 
-    public User(String fullName, String email, String phone, String password, UserRole role) {
+    public User(String fullName, String email, String phone, String password, UserRole role,BigDecimal balance) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.password = password;
         this.role = role;
+        this.balance = balance;
     }
 
 
@@ -73,5 +76,14 @@ public class User {
     public void setRole(UserRole role) {
         this.role = role;
     }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
 
 }

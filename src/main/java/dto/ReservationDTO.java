@@ -34,10 +34,6 @@ public class ReservationDTO {
             return this.code;
         }
 
-         public void setCode(String code){
-            this.code = code;
-        }
-
         public String getRoomNumber(){
             return  this.roomNumber;
         }
@@ -50,40 +46,20 @@ public class ReservationDTO {
             return this.checkIn;
         }
 
-        public  void setCheckIn(LocalDate checkIn){
-            this.checkIn = checkIn;
-        }
-
         public LocalDate getCheckOut(){
             return this.checkOut;
-        }
-
-        public  void setCheckOut(LocalDate checkOut){
-            this.checkOut = checkOut;
         }
 
         public int getGuests(){
             return this.guests;
         }
 
-        public void setGuests(){
-            this.guests = guests;
-        }
-
         public int getNumberNight() {
             return numberNight;
         }
 
-        public void setNumberNight(int numberNight) {
-            this.numberNight = numberNight;
-        }
-
-    public BigDecimal getTotalPrice(){
+        public BigDecimal getTotalPrice(){
             return this.totalPrice;
-        }
-
-        public void setTotalPrice(BigDecimal totalPrice){
-            this.totalPrice = totalPrice;
         }
 
         public ReservationStatus getStatus(){
@@ -96,10 +72,6 @@ public class ReservationDTO {
 
         public LocalDate getCreatedAt() {
             return createdAt;
-        }
-
-        public void setCreatedAt(LocalDate createdAt) {
-            this.createdAt = createdAt;
         }
 
 }

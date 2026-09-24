@@ -1,14 +1,15 @@
 package main;
 
+import dto.InvoiceDTO;
 import dto.ReservationDTO;
-import exception.InvalidReservationDateException;
-import exception.ReservationNotFoundException;
-import exception.RoomNotFoundException;
-import exception.RoomUnavailableException;
+import exception.*;
+import model.Invoice;
 import model.Reservation;
+import model.Room;
 import utils.DateUtils;
 import utils.InputUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,10 +49,16 @@ public class ReservationMenu {
             LocalDate checkout = DateUtils.readDate("Entrer Checkout ex (2026-09-15) : ");
 
             int numberOfGuests = InputUtils.readInt("Entrer numbre des persone ");
+            Room room = Main.roomService.findRoom(roomNumber);
+            BigDecimal roomPrice = room.getPrice();
+            int choix = PaymentMenu.menuPayment();
+            InvoiceDTO invoice = Main.reservationService.creetReservation(roomNumber, checkIn, checkout, numberOfGuests,choix);
+            BigDecimal totalprice = Main.reservationService.calculerTotalPrice(roomPrice , checkIn,checkout);
+            System.out.println("Total Prix est : " + totalprice);
+            afficherInvoice(invoice);
 
-            Main.reservationService.creetReservation(roomNumber, checkIn, checkout, numberOfGuests);
-
-        }catch (InvalidReservationDateException | RoomNotFoundException | RoomUnavailableException e){
+        }catch (InvalidReservationDateException | RoomNotFoundException | RoomUnavailableException |
+                InvalidBalanceException e){
             System.out.println("Erreur :" + e.getMessage());
 
         }
@@ -80,5 +87,15 @@ public class ReservationMenu {
         }catch (RoomNotFoundException e){
             System.out.println("Erreur : "+e.getMessage());
         }
+    }
+
+    public static void afficherInvoice(InvoiceDTO invoice) {
+
+        System.out.println("===============FACTURE===============");
+        System.out.println("Date : " + invoice.getIssuedAt());
+        System.out.println("Subtotal HT : " + invoice.getSubtotalHT() + " DH");
+        System.out.println("TVA (20%) : " + invoice.getVat() + " DH");
+        System.out.println("Total TTC : " + invoice.getTotalTTC() + " DH");
+        System.out.println("=====================================");
     }
 }

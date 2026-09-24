@@ -1,13 +1,16 @@
 package service;
 
 import exception.EmailAlreadyExistsException;
+import exception.InvalidBalanceException;
 import exception.InvalidCredentialsException;
 import model.User;
 import Repository.jdbc.JdbcUserRepository;
 import model.enums.UserRole;
+import utils.MoneyUtils;
 import utils.PasswordUtils;
 import utils.ValidationUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class AuthService {
@@ -22,7 +25,7 @@ public class AuthService {
         return userRepo;
     }
 
-    public void Register(String fullName , String email, String phone , String password)  {
+    public void Register(String fullName , String email, String phone , String password , BigDecimal balance) throws InvalidBalanceException {
         if(!ValidationUtils.isValidName(fullName)){
             throw new IllegalArgumentException("Name invalide");
         }
@@ -35,12 +38,15 @@ public class AuthService {
         if(!ValidationUtils.isValidPassword(password)){
             throw new IllegalArgumentException("Password invalide");
         }
+        if(!MoneyUtils.isPositive(balance)){
+            throw new InvalidBalanceException("Balance invalide");
+        }
         if(userRepo.existsByEmail(email)){
             throw new EmailAlreadyExistsException("Email déja exist");
         }
             String passwordHash = PasswordUtils.hashPassword(password);
 
-            User user = new User(fullName ,email ,phone , passwordHash , UserRole.CLIENT);
+            User user = new User(fullName ,email ,phone , passwordHash , UserRole.CLIENT,balance);
             this.userRepo.save(user);
     }
 
@@ -123,5 +129,8 @@ public class AuthService {
         return users;
     }
 
+    public void updateBalance(User user , BigDecimal balance){
+        this.userRepo.updateBalance(user , balance);
+    }
 
 }

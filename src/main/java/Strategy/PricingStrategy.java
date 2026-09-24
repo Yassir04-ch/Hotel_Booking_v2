@@ -1,4 +1,4 @@
-package policy;
+package Strategy;
 
 public class PricingStrategy {
 }

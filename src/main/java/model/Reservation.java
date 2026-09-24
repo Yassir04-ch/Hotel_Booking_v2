@@ -25,6 +25,7 @@ public class Reservation {
     }
 
     public Reservation(String code, UUID userId, Room room, LocalDate checkIn, LocalDate checkOut, int guests, int numberOfNights, BigDecimal totalPrice, ReservationStatus status) {
+        this.id = UUID.randomUUID();
         this.code = code;
         this.userId = userId;
         this.room = room;

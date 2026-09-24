@@ -26,19 +26,20 @@ public class JdbcReservationRepository implements ReservationRepository {
 
     @Override
     public void save(Reservation reservation) {
-        String sql= "INSERT INTO reservations (reservation_code,user_id,room_number,check_in,check_out,number_of_guests,number_of_nights,total_price,status)"
-              + "VALUES (?,?,?,?,?,?,?,?,?::reservation_status)";
+        String sql= "INSERT INTO reservations (id,reservation_code,user_id,room_number,check_in,check_out,number_of_guests,number_of_nights,total_price,status)"
+              + "VALUES (?,?,?,?,?,?,?,?,?,?::reservation_status)";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1,reservation.getCode());
-            statement.setObject(2,reservation.getUserId());
-            statement.setString(3,reservation.getRoom().getRoomNumber());
-            statement.setDate(4, Date.valueOf(reservation.getCheckIn()));
-            statement.setDate(5, Date.valueOf(reservation.getCheckOut()));
-            statement.setInt(6,reservation.getGuests());
-            statement.setInt(7,reservation.getNumberOfNights());
-            statement.setBigDecimal(8,reservation.getTotalPrice());
-            statement.setString(9,reservation.getStatus().name());
+            statement.setObject(1,reservation.getId());
+            statement.setString(2,reservation.getCode());
+            statement.setObject(3,reservation.getUserId());
+            statement.setString(4,reservation.getRoom().getRoomNumber());
+            statement.setDate(5, Date.valueOf(reservation.getCheckIn()));
+            statement.setDate(6, Date.valueOf(reservation.getCheckOut()));
+            statement.setInt(7,reservation.getGuests());
+            statement.setInt(8,reservation.getNumberOfNights());
+            statement.setBigDecimal(9,reservation.getTotalPrice());
+            statement.setString(10,reservation.getStatus().name());
             statement.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException(e);

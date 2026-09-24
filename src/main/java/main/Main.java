@@ -1,6 +1,7 @@
 package main;
 
 import exception.EmailAlreadyExistsException;
+import exception.InvalidBalanceException;
 import exception.InvalidCredentialsException;
 import model.User;
 import model.enums.UserRole;
@@ -8,6 +9,7 @@ import service.AuthService;
 import service.ReservationService;
 import service.RoomService;
 import utils.InputUtils;
+import java.math.BigDecimal;
 
 
 public class Main {
@@ -34,16 +36,14 @@ public class Main {
 
                 String email = InputUtils.readString("Email : ");
                 String password = InputUtils.readString("Mode passe : ");
+                BigDecimal balance = InputUtils.readBigDecimal("Entrer Votre balance : ");
 
-                Main.authService.Register(fullName, email, phone, password);
+                Main.authService.Register(fullName, email, phone, password , balance);
 
                 System.out.println("Register réussi ");
                 return;
 
-            } catch (IllegalArgumentException e) {
-                System.out.println("Erreur : " + e.getMessage());
-                System.out.println("Veuillez réessayer");
-            } catch (EmailAlreadyExistsException e) {
+            } catch (IllegalArgumentException | InvalidBalanceException | EmailAlreadyExistsException e) {
                 System.out.println("Erreur : " + e.getMessage());
                 System.out.println("Veuillez réessayer");
             }

@@ -29,11 +29,11 @@ public class Invoice {
         this.id = id;
     }
 
-    public Payment getReservation() {
+    public Payment getPayment() {
         return payment;
     }
 
-    public void setReservation(Payment payment) {
+    public void setPayment(Payment payment) {
         this.payment = payment;
     }
 

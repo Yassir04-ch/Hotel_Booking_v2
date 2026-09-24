@@ -18,10 +18,10 @@ public class JdbcInvoiceRepository implements InvoiceRepository {
 
     @Override
     public void save(Invoice invoice) {
-      String sql = "INSERT INTO invoices(reservation_id,subtotal_ht,vat,total_ttc,issued_at)VALUES(?,?,?,?,?)";
+      String sql = "INSERT INTO invoices(payment_id,subtotal_ht,vat,total_ttc,issued_at)VALUES(?,?,?,?,?)";
       try{
           PreparedStatement statement = connection.prepareStatement(sql);
-          statement.setObject(1,invoice.getReservation().getId());
+          statement.setObject(1,invoice.getPayment().getId());
           statement.setBigDecimal(2,invoice.getSubtotalHT());
           statement.setBigDecimal(3,invoice.getVat());
           statement.setBigDecimal(4,invoice.getSubtotalHT());

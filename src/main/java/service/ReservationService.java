@@ -1,35 +1,41 @@
 package service;
 
 import Repository.jdbc.JdbcReservationRepository;
-import dto.AvailableRoomDTO;
+import db.DatabaseConnection;
+import dto.InvoiceDTO;
 import dto.ReservationDTO;
-import exception.InvalidReservationDateException;
-import exception.ReservationNotFoundException;
-import exception.RoomNotFoundException;
-import exception.RoomUnavailableException;
-import main.ReservationMenu;
-import model.Reservation;
-import model.Room;
-import model.User;
+import exception.*;
+import model.*;
 import model.enums.ReservationStatus;
 import model.enums.RoomStatus;
+import utils.MoneyUtils;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import Strategy.payment.BalancePaymentStrategy;
+import Strategy.payment.CardPaymentStrategy;
+import Strategy.payment.PaymentContext;
+import Strategy.payment.PaymentStrategy;
 
 public class ReservationService {
 
     private JdbcReservationRepository jdbcReservation;
     private RoomService roomService ;
+    private PaymentService paymentService;
+    private InvoiceService invoiceService;
 
 
     public ReservationService(RoomService roomService){
         this.jdbcReservation = new JdbcReservationRepository();
         this.roomService = roomService;
+        this.paymentService = new PaymentService();
+        this.invoiceService = new InvoiceService();
     }
 
     public void validateDates(LocalDate checkIn, LocalDate checkOut
@@ -109,16 +115,34 @@ public class ReservationService {
     }
 
 
+    private PaymentStrategy getPaymentStrategy(int choix) {
 
-    public void creetReservation(String roomNumber, LocalDate checkIn, LocalDate checkOut,
-                                 int numberOfGuests) throws InvalidReservationDateException , RoomNotFoundException, RoomUnavailableException {
+
+        switch (choix) {
+
+            case 1:
+                return new BalancePaymentStrategy();
+
+            case 2:
+                return new CardPaymentStrategy();
+
+            default:
+                throw new IllegalArgumentException(
+                        "Choix invalide."
+                );
+        }
+    }
+
+
+    public InvoiceDTO creetReservation(String roomNumber, LocalDate checkIn, LocalDate checkOut,
+                                 int numberOfGuests,int choix ) throws InvalidReservationDateException, RoomNotFoundException, RoomUnavailableException, InvalidBalanceException {
 
         this.validateDates(checkIn, checkOut);
 
         if (numberOfGuests <= 0) {
             throw new InvalidReservationDateException("Le nombre de personnes invalide.");
         }
-
+        User user = AuthService.getUserLogin();
         Room room = this.roomService.findRoom(roomNumber);
         if (numberOfGuests > room.getCapacity()) {
             throw new InvalidReservationDateException("Le nombre de personnes dépasse la capacité de la chambre.");
@@ -128,25 +152,59 @@ public class ReservationService {
             throw new RoomUnavailableException("La chambre n'est pas disponible.");
         }
 
+        BigDecimal totalPrice = this.calculerTotalPrice(room.getPrice(),checkIn,checkOut);
+
+        BigDecimal totalTTC = MoneyUtils.calculateTTC(totalPrice);
+//        System.out.println(user.getBalance());
+//        System.exit(0);
         if (!checkDate(room, checkIn, checkOut)) {
             throw new RoomUnavailableException("La chambre est déja réservée dans " + checkIn);
         }
 
         int days =(int) ChronoUnit.DAYS.between(checkIn, checkOut);
 
-        BigDecimal totalPrice = this.calculerTotalPrice(room.getPrice(),checkIn,checkOut);
 
 //        System.out.println(totalPrice);
 //        System.exit(0);
-
         Reservation reservation = new Reservation(UUID.randomUUID().toString(),
-                AuthService.getUserLogin().getId(), room, checkIn, checkOut,
+                user.getId(), room, checkIn, checkOut,
                 numberOfGuests, days, totalPrice, ReservationStatus.CONFIRMED);
 
-        this.jdbcReservation.save(reservation);
+        PaymentStrategy strategy = this.getPaymentStrategy(choix);
+        PaymentContext paymentContext = new PaymentContext(strategy);
 
-        System.out.println("Reservation crée.");
+        Connection connection = DatabaseConnection.getInstance().getConnection();
+        try {
+            connection.setAutoCommit(false);
+            this.jdbcReservation.save(reservation);
+            paymentContext.pay(user, totalTTC);
+            Payment payment = this.paymentService.createPaiment( reservation, totalPrice );
+            Invoice invoice = this.invoiceService.createInvoice(payment);
+            connection.commit();
+            System.out.println("Reservation succes");
+            return this.mapInvoice(invoice);
 
+        }catch (Exception e){
+            try{
+                connection.rollback();
+            }catch (SQLException roolback){
+                roolback.printStackTrace();
+            }
+            throw new RuntimeException("erreur dans creation reservation : " +e.getMessage());
+        }finally {
+            try{
+               connection.setAutoCommit(true);
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public InvoiceDTO mapInvoice(Invoice invoice){
+        InvoiceDTO invoicedto = new InvoiceDTO(invoice.getSubtotalHT(),invoice.getVat(),
+                                invoice.getTotalTTC(),invoice.getIssuedAt());
+        return invoicedto;
     }
 
     public List<ReservationDTO> mapReservations(List<Reservation>  reservations){
