@@ -89,6 +89,7 @@ public class JdbcReservationRepository implements ReservationRepository {
                 reservation.setGuests(resultSet.getInt("number_of_guests"));
                 reservation.setNumberOfNights(resultSet.getInt("number_of_nights"));
                 reservation.setStatus(ReservationStatus.valueOf(resultSet.getString("status")));
+                reservation.setTotalPrice(resultSet.getBigDecimal("total_price"));
                 reservation.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
 
               return Optional.of(reservation);

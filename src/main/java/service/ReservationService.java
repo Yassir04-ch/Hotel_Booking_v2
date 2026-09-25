@@ -33,6 +33,7 @@ public class ReservationService {
     private PaymentService paymentService;
     private InvoiceService invoiceService;
     private RemboursementPolicy remboursementPolicy;
+
     public ReservationService(RoomService roomService){
         this.jdbcReservation = new JdbcReservationRepository();
         this.roomService = roomService;
@@ -130,9 +131,7 @@ public class ReservationService {
                 return new CardPaymentStrategy();
 
             default:
-                throw new IllegalArgumentException(
-                        "Choix invalide."
-                );
+                throw new IllegalArgumentException("Choix invalide.");
         }
     }
 
@@ -283,8 +282,6 @@ public class ReservationService {
 
           BigDecimal totalRembour = this.remboursementPolicy.calculateRefund(reservation);
 
-          System.out.println(totalRembour);
-          System.exit(0);
           BigDecimal newBalance = MoneyUtils.add(user.getBalance(), totalRembour);
 
           this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);

@@ -10,7 +10,7 @@ public class ClientMenu {
             System.out.println("2. View all rooms");
             System.out.println("3. Create reservation");
             System.out.println("4. My reservations");
-            System.out.println("5. Reservation details");
+            System.out.println("5. Update password");
             System.out.println("6. Update reservation");
             System.out.println("7. Cancel reservation");
             System.out.println("8. Afficher Profile");

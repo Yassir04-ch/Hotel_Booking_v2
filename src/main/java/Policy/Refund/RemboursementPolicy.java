@@ -28,7 +28,6 @@ public class RemboursementPolicy implements RefundPolicy {
         if (dayBeforChick >= 2) {
             return total.multiply(new BigDecimal("0.50"));
         }
-     System.out.println(total);
         return BigDecimal.ZERO;
     }
 }
