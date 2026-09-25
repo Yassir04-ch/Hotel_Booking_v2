@@ -79,10 +79,6 @@ public class AuthService {
         userLogin = user;
     }
 
-    public  boolean isLogin(){
-        return userLogin != null;
-    }
-
     public void logOut(){
         userLogin = null;
     }
@@ -123,9 +119,7 @@ public class AuthService {
     public List<User> getAll(){
         List<User> users = this.userRepo.findAll().stream().
                 filter(e->e.getRole().equals("user")).toList();
-        if(users.isEmpty()){
-            System.out.println("Aucune client");
-        }
+
         return users;
     }
 

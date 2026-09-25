@@ -10,7 +10,7 @@ public class ClientMenu {
             System.out.println("2. View all rooms");
             System.out.println("3. Create reservation");
             System.out.println("4. My reservations");
-            System.out.println("5. Update password");
+            System.out.println("5. Update Profile");
             System.out.println("6. Update reservation");
             System.out.println("7. Cancel reservation");
             System.out.println("8. Afficher Profile");
@@ -38,6 +38,7 @@ public class ClientMenu {
                     break;
 
                 case 5:
+                     AuthMenu.menuProfile();
                     break;
 
                 case 6:
@@ -49,7 +50,7 @@ public class ClientMenu {
                     break;
 
                 case 8:
-//                    ProfileMenu.menuProfile();
+//                    AuthMenu.menuProfile();
                     break;
                 case 9:
                     Main.authService.logOut();

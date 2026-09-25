@@ -3,8 +3,6 @@ package main;
 import dto.InvoiceDTO;
 import dto.ReservationDTO;
 import exception.*;
-import model.Invoice;
-import model.Reservation;
 import model.Room;
 import utils.DateUtils;
 import utils.InputUtils;

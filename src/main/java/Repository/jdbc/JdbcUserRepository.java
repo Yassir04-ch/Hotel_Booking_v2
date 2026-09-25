@@ -5,7 +5,6 @@ import db.DatabaseConnection;
 import model.User;
 import model.enums.UserRole;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,12 +40,13 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void update(User user) {
-        String sql = "UPDATE users SET email = ?, phone = ?, password = ? WHERE id = ?";
+        String sql = "UPDATE users SET full_name = ?,  email = ?, phone = ? WHERE id = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1,user.getEmail());
-            statement.setString(2,user.getPhone());
-            statement.setString(3, user.getPassword());
+            statement.setString(1,user.getFullName());
+            statement.setString(2,user.getEmail());
+            statement.setString(3,user.getPhone());
+            statement.setObject(4,user.getId());
             statement.executeUpdate();
         }catch (SQLException e){
          throw new RuntimeException(e);
