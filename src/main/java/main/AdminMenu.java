@@ -43,7 +43,7 @@ public class AdminMenu {
 
                 case 6 :
                     ReservationMenu.afficherReservation(Main.reservationService.allReservation());
-                    return;
+                    break;
                 case 7 :
                     RoomMenu.deleteRoom();
                    break;
