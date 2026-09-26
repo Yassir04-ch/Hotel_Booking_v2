@@ -55,6 +55,7 @@ public class ClientMenu {
                 case 0:
                     System.out.println("Good Day");
                     System.exit(0);
+                    break;
 
                 default:
                     System.out.println("choix Invalide");

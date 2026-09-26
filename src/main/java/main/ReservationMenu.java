@@ -74,13 +74,8 @@ public class ReservationMenu {
 
             Main.reservationService.updateReservation(reservationCode, roomNumber, checkIn, checkout, numberGuest);
 
-        }catch (ReservationNotFoundException e){
-            System.out.println("Erreur : "+e.getMessage());
-
-        }catch (InvalidReservationDateException e){
-            System.out.println("Erreur : "+e.getMessage());
-
-        }catch (RoomNotFoundException e){
+        }catch (ReservationNotFoundException | RoomNotFoundException | InvalidReservationDateException |
+                PaymentNotFound | InvoiceNotFound e){
             System.out.println("Erreur : "+e.getMessage());
         }
     }

@@ -13,6 +13,10 @@ public class Invoice {
     private BigDecimal totalTTC;
     private LocalDate issuedAt;
 
+    public Invoice() {
+
+    }
+
     public Invoice(Payment payment, BigDecimal subtotalHT, BigDecimal vat, BigDecimal totalTTC, LocalDate issuedAt) {
         this.payment = payment;
         this.subtotalHT = subtotalHT;

@@ -36,11 +36,9 @@ public class DefaultPricingStrategy implements PricingStrategy {
 
         }
         if (nombreNuit >= 14) {
-
             total = total.multiply(new BigDecimal("0.85"));
 
         } else if (nombreNuit >= 7) {
-
             total = total.multiply(new BigDecimal("0.90"));
         }
 

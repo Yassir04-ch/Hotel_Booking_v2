@@ -33,6 +33,7 @@ public class ReservationService {
     private InvoiceService invoiceService;
     private DefaultPricingStrategy pricingStrategy;
     private RemboursementPolicy remboursementPolicy;
+    private static final Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public ReservationService(RoomService roomService){
         this.jdbcReservation = new JdbcReservationRepository();
@@ -56,11 +57,15 @@ public class ReservationService {
         }
     }
 
-    public boolean checkDate(Room room, LocalDate checkIn, LocalDate checkOut){
+    public boolean checkDate(Room room, LocalDate checkIn, LocalDate checkOut,String code){
 
         List<Reservation> listReservations = this.jdbcReservation.findByRoomNumber(room.getRoomNumber());
 
         for (Reservation reservation : listReservations) {
+
+            if (reservation.getCode().equals(code)) {
+                continue;
+            }
 
             if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
 
@@ -114,7 +119,7 @@ public class ReservationService {
         BigDecimal totalTTC = MoneyUtils.calculateTTC(totalPrice);
 //        System.out.println(user.getBalance());
 //        System.exit(0);
-        if (!checkDate(room, checkIn, checkOut)) {
+        if (!checkDate(room, checkIn, checkOut,null)) {
             throw new RoomUnavailableException("La chambre est déja réservée dans " + checkIn);
         }
 
@@ -130,7 +135,6 @@ public class ReservationService {
         PaymentStrategy strategy = this.getPaymentStrategy(choix);
         PaymentContext paymentContext = new PaymentContext(strategy);
 
-        Connection connection = DatabaseConnection.getInstance().getConnection();
         try {
             connection.setAutoCommit(false);
             this.jdbcReservation.save(reservation);
@@ -186,17 +190,18 @@ public class ReservationService {
         return this.mapReservations(reservations);
     }
 
-    public void updateReservation(String code, String roomNumber, LocalDate checkIn, LocalDate checkout, int numberGuest) throws ReservationNotFoundException,
-            InvalidReservationDateException , RoomNotFoundException {
+    public InvoiceDTO updateReservation(String code, String roomNumber, LocalDate checkIn, LocalDate checkout, int numberGuest
+    ) throws ReservationNotFoundException, InvalidReservationDateException, RoomNotFoundException, PaymentNotFound, InvoiceNotFound {
+
         Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(() ->
-                new ReservationNotFoundException("Reservation not found"));
+                        new ReservationNotFoundException("Reservation not found"));
 
         if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
             throw new IllegalArgumentException("Cette réservation n'est pas confirmée.");
         }
 
         if (reservation.getCheckIn().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("impossible de modifier une réservation déja commencée.");
+            throw new IllegalArgumentException("Impossible de modifier une réservation déjà commencée.");
         }
 
         Room room = this.roomService.findRoom(roomNumber);
@@ -205,25 +210,64 @@ public class ReservationService {
             throw new InvalidReservationDateException("Le nombre de personnes dépasse la capacité de la chambre");
         }
 
-        this.jdbcReservation.updateStatus(reservation, ReservationStatus.CANCELLED);
-        boolean valid = this.checkDate(room, checkIn, checkout);
+        boolean valid = this.checkDate(room, checkIn, checkout,code);
+
         if (!valid) {
-            this.jdbcReservation.updateStatus(reservation, ReservationStatus.CONFIRMED);
             throw new InvalidReservationDateException("La chambre est déjà réservée dans cette période.");
         }
 
-        BigDecimal totalPrix = this.pricingStrategy.calculerTotalPrice(room.getPrice() , checkIn ,checkout);
-        int numberOfNights =(int) ChronoUnit.DAYS.between(checkIn,checkout);
+        BigDecimal ancienPrix = reservation.getTotalPrice();
+
+        BigDecimal nouveauPrix = this.pricingStrategy.calculerTotalPrice(room.getPrice(), checkIn, checkout);
+
+        BigDecimal difference = ancienPrix.subtract(nouveauPrix);
+
+        int numberOfNights = (int) ChronoUnit.DAYS.between(checkIn, checkout);
+
         reservation.setRoom(room);
         reservation.setCheckIn(checkIn);
         reservation.setCheckOut(checkout);
         reservation.setGuests(numberGuest);
-        reservation.setTotalPrice(totalPrix);
+        reservation.setTotalPrice(nouveauPrix);
         reservation.setNumberOfNights(numberOfNights);
-        reservation.setCreatedAt(LocalDate.now());
-        this.jdbcReservation.update(reservation);
-        System.out.println("Reservation updated");
-      }
+
+        if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal remboursement = difference;
+            System.out.println("Remboursement client : " + remboursement + " DH");
+
+        } else if (difference.compareTo(BigDecimal.ZERO) < 0) {
+
+            BigDecimal montantSupplementaire = difference.abs();
+
+            System.out.println("Montant Totale : " + montantSupplementaire + " DH");
+
+        } else {
+            System.out.println("Aucune différence de prix.");
+        }
+        try {
+            connection.setAutoCommit(false);
+            this.jdbcReservation.update(reservation);
+            Payment payment =  this.paymentService.updatePayment(reservation,nouveauPrix);
+            Invoice invoice = this.invoiceService.update(payment);
+            System.out.println("Reservation updated");
+            return this.mapInvoice(invoice);
+
+        }catch (Exception e){
+            try{
+                connection.rollback();
+            }catch (SQLException roolback){
+                roolback.printStackTrace();
+            }
+            throw new RuntimeException("erreur dans modification reservation : " +e.getMessage());
+        }finally {
+            try{
+                connection.setAutoCommit(true);
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+    }
 
       public void cancelReservation(String code) throws ReservationNotFoundException {
           Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(()->
