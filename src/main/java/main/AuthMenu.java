@@ -86,10 +86,13 @@ public class AuthMenu {
              return;
         }
         for(User user : users){
+            System.out.println("===========All Clients=============");
             System.out.println("Nom : " + user.getFullName());
             System.out.println("Phone : " + user.getPhone());
             System.out.println("Email : " + user.getEmail());
             System.out.println("Role : " + user.getRole());
+            System.out.println("===================================");
+
         }
     }
 

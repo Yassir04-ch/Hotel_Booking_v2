@@ -120,4 +120,31 @@ public class RoomService {
         System.out.println("Room deleted");
     }
 
+    public void filterParType(RoomType type){
+        List<Room> rooms = this.jdbcRoomRepo.findAll().stream().filter(e->e.getType() == type).toList();
+        if(rooms.isEmpty()){
+            System.out.println("Aucune room ");
+            return;
+        }
+        this.afficherRooms(rooms);
+    }
+
+
+    public void filterParPrix(BigDecimal prix){
+        List<Room> rooms = this.jdbcRoomRepo.findAll().stream().filter(e -> e.getPrice().compareTo(prix) <= 0).toList();
+        if(rooms.isEmpty()){
+            System.out.println("Aucune room");
+            return;
+        }
+        this.afficherRooms(rooms);
+    }
+
+    public void filterCapacity(int capacity){
+        List<Room> rooms = this.jdbcRoomRepo.findAll().stream().filter(e -> e.getCapacity() == capacity).toList();
+        if(rooms.isEmpty()){
+            System.out.println("Aucune room");
+            return;
+        }
+        this.afficherRooms(rooms);
+    }
 }

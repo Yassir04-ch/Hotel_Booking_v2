@@ -118,7 +118,7 @@ public class AuthService {
 
     public List<User> getAll(){
         List<User> users = this.userRepo.findAll().stream().
-                filter(e->e.getRole().equals("user")).toList();
+                filter(e->e.getRole() == UserRole.CLIENT).toList();
 
         return users;
     }

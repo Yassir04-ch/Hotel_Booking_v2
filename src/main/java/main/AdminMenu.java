@@ -14,7 +14,8 @@ public class AdminMenu {
             System.out.println("4. Set room AVAILABLE");
             System.out.println("5. Set room maintenance");
             System.out.println("6. View all reservations");
-            System.out.println("7. delete Room");
+            System.out.println("7. View all Client");
+            System.out.println("8. delete Room");
             System.out.println("0. Exit");
 
             int choix = InputUtils.readInt("Entrer une Choix");
@@ -45,6 +46,9 @@ public class AdminMenu {
                     ReservationMenu.afficherReservation(Main.reservationService.allReservation());
                     break;
                 case 7 :
+                    AuthMenu.getAll();
+                    break;
+                case 8:
                     RoomMenu.deleteRoom();
                    break;
                 case 0:

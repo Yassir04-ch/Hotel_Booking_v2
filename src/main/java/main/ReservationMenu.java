@@ -75,7 +75,7 @@ public class ReservationMenu {
             Main.reservationService.updateReservation(reservationCode, roomNumber, checkIn, checkout, numberGuest);
 
         }catch (ReservationNotFoundException | RoomNotFoundException | InvalidReservationDateException |
-                PaymentNotFound | InvoiceNotFound e){
+                PaymentNotFound | InvoiceNotFound | ReservationNotCancellableException e){
             System.out.println("Erreur : "+e.getMessage());
         }
     }
@@ -96,7 +96,7 @@ public class ReservationMenu {
         try{
         Main.reservationService.cancelReservation(code);
         System.out.println("Reservation Cancel");
-        }catch (ReservationNotFoundException e){
+        }catch (ReservationNotFoundException | ReservationNotCancellableException e){
             System.out.println("Erreur : "+e.getMessage());
         }
     }

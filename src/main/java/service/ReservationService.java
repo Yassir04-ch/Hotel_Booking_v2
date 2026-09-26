@@ -191,13 +191,13 @@ public class ReservationService {
     }
 
     public InvoiceDTO updateReservation(String code, String roomNumber, LocalDate checkIn, LocalDate checkout, int numberGuest
-    ) throws ReservationNotFoundException, InvalidReservationDateException, RoomNotFoundException, PaymentNotFound, InvoiceNotFound {
+    ) throws ReservationNotFoundException, InvalidReservationDateException, RoomNotFoundException, PaymentNotFound, InvoiceNotFound, ReservationNotCancellableException {
 
         Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(() ->
                         new ReservationNotFoundException("Reservation not found"));
 
         if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
-            throw new IllegalArgumentException("Cette réservation n'est pas confirmée.");
+            throw new ReservationNotCancellableException("Cette réservation n'est pas confirmée.");
         }
 
         if (reservation.getCheckIn().isBefore(LocalDate.now())) {
@@ -269,12 +269,12 @@ public class ReservationService {
 
     }
 
-      public void cancelReservation(String code) throws ReservationNotFoundException {
+      public void cancelReservation(String code) throws ReservationNotFoundException, ReservationNotCancellableException {
           Reservation reservation = this.jdbcReservation.findByCode(code).orElseThrow(()->
                   new ReservationNotFoundException("Reservation not found"));
 
           if(reservation.getStatus() != ReservationStatus.CONFIRMED){
-              throw new IllegalArgumentException("Cette réservation est déja annulée ou Terminée");
+              throw new ReservationNotCancellableException("Cette réservation est déja annulée ou Terminée");
           }
 
           User user = AuthService.getUserLogin();

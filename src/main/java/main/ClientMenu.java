@@ -22,6 +22,7 @@ public class ClientMenu {
 
                 case 1:
                     RoomMenu.afficherRoomsAvailable();
+                    RoomMenu.filterRooms();
                     break;
 
                 case 2:
