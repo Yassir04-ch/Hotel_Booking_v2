@@ -1,8 +1,5 @@
 package main;
 
-import Strategy.payment.BalancePaymentStrategy;
-import Strategy.payment.CardPaymentStrategy;
-import Strategy.payment.PaymentStrategy;
 import utils.InputUtils;
 
 public class PaymentMenu {

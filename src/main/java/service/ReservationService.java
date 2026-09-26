@@ -1,8 +1,8 @@
 package service;
 
 import Policy.Refund.RemboursementPolicy;
-import Policy.RefundPolicy;
 import Repository.jdbc.JdbcReservationRepository;
+import Strategy.payment.DefaultPricingStrategy;
 import db.DatabaseConnection;
 import dto.InvoiceDTO;
 import dto.ReservationDTO;
@@ -15,7 +15,6 @@ import utils.MoneyUtils;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.UUID;
 import Strategy.payment.BalancePaymentStrategy;
 import Strategy.payment.CardPaymentStrategy;
 import Strategy.payment.PaymentContext;
-import Strategy.payment.PaymentStrategy;
+import Strategy.PaymentStrategy;
 
 public class ReservationService {
 
@@ -32,6 +31,7 @@ public class ReservationService {
     private  AuthService authService;
     private PaymentService paymentService;
     private InvoiceService invoiceService;
+    private DefaultPricingStrategy pricingStrategy;
     private RemboursementPolicy remboursementPolicy;
 
     public ReservationService(RoomService roomService){
@@ -41,7 +41,7 @@ public class ReservationService {
         this.invoiceService = new InvoiceService();
         this.remboursementPolicy = new RemboursementPolicy();
         this.authService = new AuthService();
-
+        this.pricingStrategy = new DefaultPricingStrategy();
     }
 
     public void validateDates(LocalDate checkIn, LocalDate checkOut
@@ -73,51 +73,6 @@ public class ReservationService {
         }
 
         return true;
-    }
-
-    public BigDecimal calculerTotalPrice(BigDecimal roomPrice,LocalDate chickin , LocalDate chickout){
-         BigDecimal total = BigDecimal.ZERO;
-         long nombreNuit = ChronoUnit.DAYS.between(chickin,chickout);
-         LocalDate date = chickin;
-         while (date.isBefore(chickout)){
-             BigDecimal nightPrice = roomPrice;
-             if(date.getMonthValue() == 7 || date.getMonthValue() == 8 )
-             {
-                 nightPrice = nightPrice.multiply(new BigDecimal("1.30"));
-             }
-             if(date.getMonthValue() == 11 || date.getMonthValue() == 12 ||
-                     date.getMonthValue() == 1 || date.getMonthValue() == 2 )
-             {
-                 nightPrice = nightPrice.multiply(new BigDecimal("0.85"));
-             }
-             if(date.getDayOfWeek() == DayOfWeek.FRIDAY || date.getDayOfWeek() == DayOfWeek.SATURDAY ){
-                 nightPrice = nightPrice.multiply(new BigDecimal("1.15"));
-             }
-
-             total = total.add(nightPrice);
-
-             date = date.plusDays(1);
-
-         }
-            if (nombreNuit >= 14) {
-
-                total = total.multiply(new BigDecimal("0.85"));
-
-            } else if (nombreNuit >= 7) {
-
-                total = total.multiply(new BigDecimal("0.90"));
-            }
-
-            long daysBefCheckIn = ChronoUnit.DAYS.between(LocalDate.now(),chickin);
-            if(daysBefCheckIn >= 30){
-                total = total.multiply(new BigDecimal("0.95"));
-            }
-            else if(daysBefCheckIn <= 3){
-                total = total.multiply(new BigDecimal("1.10"));
-            }
-
-            return total;
-
     }
 
 
@@ -154,7 +109,7 @@ public class ReservationService {
             throw new RoomUnavailableException("La chambre n'est pas disponible.");
         }
 
-        BigDecimal totalPrice = this.calculerTotalPrice(room.getPrice(),checkIn,checkOut);
+        BigDecimal totalPrice = this.pricingStrategy.calculerTotalPrice(room.getPrice(),checkIn,checkOut);
 
         BigDecimal totalTTC = MoneyUtils.calculateTTC(totalPrice);
 //        System.out.println(user.getBalance());
@@ -170,7 +125,7 @@ public class ReservationService {
 //        System.exit(0);
         Reservation reservation = new Reservation(UUID.randomUUID().toString(),
                 user.getId(), room, checkIn, checkOut,
-                numberOfGuests, days, totalPrice, ReservationStatus.CONFIRMED);
+                numberOfGuests, days, totalTTC, ReservationStatus.CONFIRMED);
 
         PaymentStrategy strategy = this.getPaymentStrategy(choix);
         PaymentContext paymentContext = new PaymentContext(strategy);
@@ -257,7 +212,7 @@ public class ReservationService {
             throw new InvalidReservationDateException("La chambre est déjà réservée dans cette période.");
         }
 
-        BigDecimal totalPrix = this.calculerTotalPrice(room.getPrice() , checkIn ,checkout);
+        BigDecimal totalPrix = this.pricingStrategy.calculerTotalPrice(room.getPrice() , checkIn ,checkout);
         int numberOfNights =(int) ChronoUnit.DAYS.between(checkIn,checkout);
         reservation.setRoom(room);
         reservation.setCheckIn(checkIn);

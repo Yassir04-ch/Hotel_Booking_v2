@@ -1,8 +1,8 @@
 package Strategy.payment;
 
+import Strategy.PaymentStrategy;
 import exception.InvalidBalanceException;
 import model.User;
-import Strategy.payment.PaymentStrategy;
 
 import java.math.BigDecimal;
 

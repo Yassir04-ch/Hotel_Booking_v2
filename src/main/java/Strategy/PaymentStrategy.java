@@ -1,4 +1,4 @@
-package Strategy.payment;
+package Strategy;
 
 import exception.InvalidBalanceException;
 import model.User;

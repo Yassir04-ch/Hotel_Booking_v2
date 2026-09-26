@@ -57,6 +57,7 @@ public class ClientMenu {
                     System.exit(0);
 
                 default:
+                    System.out.println("choix Invalide");
                     break;
             }
         }

@@ -51,8 +51,6 @@ public class ReservationMenu {
             BigDecimal roomPrice = room.getPrice();
             int choix = PaymentMenu.menuPayment();
             InvoiceDTO invoice = Main.reservationService.creetReservation(roomNumber, checkIn, checkout, numberOfGuests,choix);
-            BigDecimal totalprice = Main.reservationService.calculerTotalPrice(roomPrice , checkIn,checkout);
-            System.out.println("Total Prix est : " + totalprice);
             afficherInvoice(invoice);
 
         }catch (InvalidReservationDateException | RoomNotFoundException | RoomUnavailableException |
